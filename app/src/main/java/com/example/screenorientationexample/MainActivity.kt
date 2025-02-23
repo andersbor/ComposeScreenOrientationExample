@@ -5,11 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -28,42 +27,47 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ScreenOrientationExampleTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(innerPadding)) {
-                        val configuration = LocalConfiguration.current
-                        when (configuration.orientation) {
-                            Configuration.ORIENTATION_PORTRAIT -> {
-                                PortraitMessages()
-                            }
-
-                            Configuration.ORIENTATION_LANDSCAPE -> {
-                                LandscapeMessages()
-                            }
-
-                            else -> {
-                                Message(
-                                    "Strange orientation: ${configuration.orientation}",
-                                )
-                            }
-                        }
-                        Text(
-                            text = "Another component that is always below the messages",
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
+                MainScreen()
             }
         }
     }
 }
 
 @Composable
-fun Message(name: String, modifier: Modifier = Modifier) {
-    Card(border = BorderStroke(1.dp, Color.Black), modifier = modifier.padding(8.dp)) {
-        Text(
-            text = name,
-            modifier = modifier.padding(8.dp)
-        )
+private fun MainScreen() {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            val configuration = LocalConfiguration.current
+            when (configuration.orientation) {
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    PortraitMessages()
+                }
+
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    LandscapeMessages()
+                }
+
+                else -> {
+                    Message(
+                        "Strange orientation: ${configuration.orientation}",
+                    )
+                }
+            }
+            Text(
+                text = "Another component that is always below the messages",
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun Message(message: String, modifier: Modifier = Modifier) {
+    Card(
+        border = BorderStroke(1.dp, Color.Black),
+        modifier = modifier.padding(8.dp)
+    ) {
+        Text(text = message)
     }
 }
 
@@ -71,20 +75,23 @@ fun Message(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun LandscapeMessages(modifier: Modifier = Modifier) {
     // FlowRow is a horizontal layout that wraps when there is not enough space
-    Row(modifier = modifier) {
-        for (i in 1..5) {
-            Message(name = "Landscape $i")
+    FlowRow(
+        modifier = modifier.padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        maxItemsInEachRow = 4
+    ) {
+        for (i in 1..50) {
+            Message(message = "Landscape $i")
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PortraitMessages(modifier: Modifier = Modifier) {
     // FlowColumn is a vertical layout that wraps when there is not enough space
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(8.dp)) {
         for (i in 1..50) {
-            Message(name = "Portrait $i")
+            Message(message = "Portrait $i")
         }
     }
 }
@@ -94,6 +101,14 @@ fun PortraitMessages(modifier: Modifier = Modifier) {
 fun MessagePreview() {
     ScreenOrientationExampleTheme {
         Message("Android")
+    }
+}
+
+@Preview
+@Composable
+fun MainScreenPreview() {
+    ScreenOrientationExampleTheme {
+        MainScreen()
     }
 }
 

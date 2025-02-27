@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,6 +41,12 @@ class MainActivity : ComponentActivity() {
 private fun MainScreen() {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
+            Text(
+                text = "Another component that is always below the messages",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(1f)
+            )
             val configuration = LocalConfiguration.current
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
@@ -53,10 +63,6 @@ private fun MainScreen() {
                     )
                 }
             }
-            Text(
-                text = "Another component that is always below the messages",
-                modifier = Modifier.padding(8.dp)
-            )
         }
     }
 }
@@ -67,18 +73,25 @@ fun Message(message: String, modifier: Modifier = Modifier) {
         border = BorderStroke(1.dp, Color.Black),
         modifier = modifier.padding(8.dp)
     ) {
-        Text(text = message)
+        Text(
+            text = message,
+            modifier = modifier.padding(8.dp)
+        )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class) // FlowRow is experimental
 @Composable
 fun LandscapeMessages(modifier: Modifier = Modifier) {
+    val scrollState = rememberScrollState()
     // FlowRow is a horizontal layout that wraps when there is not enough space
     FlowRow(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .verticalScroll(scrollState)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        maxItemsInEachRow = 4
+        //maxItemsInEachRow = 4
     ) {
         for (i in 1..50) {
             Message(message = "Landscape $i")
@@ -89,8 +102,9 @@ fun LandscapeMessages(modifier: Modifier = Modifier) {
 @Composable
 fun PortraitMessages(modifier: Modifier = Modifier) {
     // FlowColumn is a vertical layout that wraps when there is not enough space
-    Column(modifier = modifier.padding(8.dp)) {
-        for (i in 1..50) {
+    // built in scrolling
+    LazyColumn(modifier = modifier.padding(8.dp)) {
+        items(50) { i ->
             Message(message = "Portrait $i")
         }
     }

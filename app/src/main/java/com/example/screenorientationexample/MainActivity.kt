@@ -85,6 +85,7 @@ fun Message(message: String, modifier: Modifier = Modifier) {
 fun LandscapeMessages(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
     // FlowRow is a horizontal layout that wraps when there is not enough space
+    // built in scrolling
     FlowRow(
         modifier = modifier
             .padding(8.dp)
@@ -101,8 +102,6 @@ fun LandscapeMessages(modifier: Modifier = Modifier) {
 
 @Composable
 fun PortraitMessages(modifier: Modifier = Modifier) {
-    // FlowColumn is a vertical layout that wraps when there is not enough space
-    // built in scrolling
     LazyColumn(modifier = modifier.padding(8.dp)) {
         items(50) { i ->
             Message(message = "Portrait $i")
